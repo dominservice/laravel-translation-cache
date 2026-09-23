@@ -41,6 +41,8 @@ final class TranslationCacheServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(TranslationSource::class, function (Application $application): TranslationSource {
+            $application->make('translator');
+
             $loader = $application->make('translation.loader');
             $source = $loader instanceof CompiledTranslationLoader ? $loader->source() : $loader;
             $locales = $application['config']->get('translation-cache.locales', []);
