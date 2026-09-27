@@ -9,8 +9,10 @@ queries.
 
 ## Requirements
 
-- PHP 8.2+
-- Laravel 12 or 13
+- PHP 8.3+
+- Laravel 13.32+
+
+The current `2.x` line targets DominPress and Laravel 13. Laravel 12 remains available through the previous `1.x` release line.
 
 ## Installation
 
