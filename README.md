@@ -93,7 +93,9 @@ override.
 ## Searching the compiled catalog
 
 The catalog reads only the cache for the selected locale. It searches keys,
-groups, namespaces, original values, and effective values.
+groups, namespaces, original values, and effective values. It can also sort by
+the translation identity (`key`), original value, or effective value. Filtering
+and sorting are applied before the requested page is sliced.
 
 ```php
 use Dominservice\LaravelTranslationCache\TranslationCatalog;
@@ -103,8 +105,15 @@ $page = app(TranslationCatalog::class)->search(
     query: 'użytkownik',
     limit: 100,
     offset: 0,
+    sort: 'original',
+    direction: 'asc',
 );
 ```
+
+`sort` accepts only `key`, `original`, or `value`; `direction` accepts `asc` or
+`desc`. Invalid values fall back to `key` and `asc`. Every order uses the full
+translation identity as a deterministic tie-breaker, so pagination remains
+stable.
 
 Each result contains `original`, `value`, and `overridden`, which maps directly
 to a two-column translation editor.
