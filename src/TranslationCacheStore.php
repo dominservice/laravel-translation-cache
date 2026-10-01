@@ -27,13 +27,23 @@ final class TranslationCacheStore
      */
     public function load(TranslationIdentity $identity): ?array
     {
-        $manifest = $this->manifest();
+        try {
+            $manifest = $this->manifest();
+        } catch (Throwable) {
+            $this->manifest = false;
+
+            return null;
+        }
 
         if ($manifest === false || ! isset($manifest['groups'][$identity->cacheKey()])) {
             return null;
         }
 
-        return $this->loadArray($this->path.DIRECTORY_SEPARATOR.$manifest['groups'][$identity->cacheKey()]);
+        try {
+            return $this->loadArray($this->path.DIRECTORY_SEPARATOR.$manifest['groups'][$identity->cacheKey()]);
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**
@@ -41,14 +51,24 @@ final class TranslationCacheStore
      */
     public function catalog(string $locale): array
     {
-        $manifest = $this->manifest();
+        try {
+            $manifest = $this->manifest();
+        } catch (Throwable) {
+            $this->manifest = false;
+
+            return [];
+        }
 
         if ($manifest === false || ! isset($manifest['catalogs'][$locale])) {
             return [];
         }
 
         /** @var list<array{locale: string, namespace: string, group: string, key: string, original: mixed, value: mixed, overridden: bool}> $catalog */
-        $catalog = $this->loadArray($this->path.DIRECTORY_SEPARATOR.$manifest['catalogs'][$locale]);
+        try {
+            $catalog = $this->loadArray($this->path.DIRECTORY_SEPARATOR.$manifest['catalogs'][$locale]);
+        } catch (Throwable) {
+            return [];
+        }
 
         return $catalog;
     }
@@ -139,7 +159,13 @@ final class TranslationCacheStore
 
     public function exists(): bool
     {
-        return $this->manifest() !== false;
+        try {
+            return $this->manifest() !== false;
+        } catch (Throwable) {
+            $this->manifest = false;
+
+            return false;
+        }
     }
 
     public function forgetManifest(): void
@@ -221,7 +247,14 @@ final class TranslationCacheStore
     private function activeBuild(): ?string
     {
         $this->forgetManifest();
-        $manifest = $this->manifest();
+
+        try {
+            $manifest = $this->manifest();
+        } catch (Throwable) {
+            $this->manifest = false;
+
+            return null;
+        }
 
         return $manifest === false ? null : $manifest['build'];
     }

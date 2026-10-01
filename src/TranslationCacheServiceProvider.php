@@ -12,6 +12,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Translation\Translator;
 
 final class TranslationCacheServiceProvider extends ServiceProvider
 {
@@ -69,6 +70,16 @@ final class TranslationCacheServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $translator = $this->app->make('translator');
+
+        if ($translator instanceof Translator) {
+            $translator->handleMissingKeysUsing(
+                fn (string $key, array $replace, ?string $locale, bool $fallback): ?string => $this->app
+                    ->make(MissingTranslationCacheHandler::class)
+                    ->handle($key, $replace, $locale, $fallback),
+            );
+        }
+
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->publishes([

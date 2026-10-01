@@ -66,4 +66,23 @@ final class CompiledTranslationLoaderTest extends TestCase
         self::assertSame(['/translations/root'], $source->paths);
         self::assertSame(['/translations/json'], $source->jsonPaths);
     }
+
+    public function test_corrupted_cache_is_treated_as_a_cache_miss(): void
+    {
+        $files = new Filesystem;
+        $files->ensureDirectoryExists($this->cachePath);
+        $files->put($this->cachePath.'/manifest.php', '<?php return false;');
+        $source = new CountingLoader([
+            'en|*|admin' => ['title' => 'Source admin'],
+        ]);
+        $store = new TranslationCacheStore($files, $this->cachePath);
+        $loader = new CompiledTranslationLoader($source, $store);
+
+        self::assertSame(['title' => 'Source admin'], $loader->load('en', 'admin', '*'));
+
+        $identity = TranslationIdentity::make('en', 'admin');
+        $store->replace([$identity->cacheKey() => ['title' => 'Rebuilt admin']], []);
+
+        self::assertSame(['title' => 'Rebuilt admin'], $loader->load('en', 'admin', '*'));
+    }
 }
