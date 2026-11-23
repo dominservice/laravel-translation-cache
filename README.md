@@ -1,11 +1,16 @@
 # Laravel Translation Cache
 
-Compile Laravel PHP, JSON, and namespaced translations together with database
-overrides into an atomic file cache. Original language files are never changed.
+<img src="docs/dominpress-logo.webp" alt="Laravel Translation Cache logo showing speech bubbles over stacked cache layers" width="128" height="128">
 
-Runtime reads stay lazy: resolving `admin.*` loads the cached `admin` group, not
-`user`. Once the cache exists, translation rendering performs no database
-queries.
+Laravel Translation Cache compiles PHP, JSON and namespaced translations together with database overrides into a file cache that loads translation groups on demand.
+
+Developed by Mateusz Domin at [Domin Software](https://dominsoftware.it/). The current release line is used in the [DominPress](https://dominsoftware.it/dominpress) stack.
+
+## Key Features
+
+- Loads individual translation groups from the compiled cache.
+- Uses database overrides while preserving the original translation files.
+- Rebuilds the compiled catalog for admin search and editing.
 
 ## Requirements
 
@@ -37,6 +42,25 @@ Publish the optional configuration file with:
 ```bash
 php artisan vendor:publish --tag=translation-cache-config
 ```
+
+## Quick Start
+
+For an application with `lang/pl/admin.php`, save an override for `admin.menu.users`.
+
+```php
+use Dominservice\LaravelTranslationCache\TranslationManager;
+
+app(TranslationManager::class)->put(
+    locale: 'pl',
+    group: 'admin',
+    key: 'menu.users',
+    value: 'Konta użytkowników',
+);
+
+__('admin.menu.users', [], 'pl'); // Konta użytkowników
+```
+
+The default configuration rebuilds the cache after the write. If automatic rebuilding is disabled, run `php artisan translations:cache` before reading the updated value.
 
 ## How it works
 
@@ -141,6 +165,14 @@ composer install
 composer test
 ```
 
+## Support
+
+Report package issues on [GitHub](https://github.com/dominservice/laravel-translation-cache/issues).
+
+If this package helps you, you can buy me a coffee to support its maintenance.
+
+[![Buy me a coffee on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/dominservice)
+
 ## License
 
-MIT
+[MIT](LICENSE)

@@ -1,20 +1,20 @@
 {
     "name": "dominservice/laravel-translation-cache",
-    "description": "Compile Laravel translations and database overrides into a lazy, file-based cache.",
-    "keywords": [
-        "cache",
-        "laravel",
-        "localization",
-        "translation"
-    ],
+    "description": "Compile Laravel translations and database overrides into a file cache that loads translation groups on demand.",
     "homepage": "https://github.com/dominservice/laravel-translation-cache",
+    "keywords": ["laravel", "translations", "localization", "caching"],
     "license": "MIT",
     "authors": [
         {
-            "name": "DSO-IT Mateusz Domin",
-            "email": "biuro@dso.biz.pl"
+            "name": "Mateusz Domin",
+            "email": "biuro@dominsoftware.it",
+            "homepage": "https://dominsoftware.it/"
         }
     ],
+    "support": {
+        "source": "https://github.com/dominservice/laravel-translation-cache",
+        "issues": "https://github.com/dominservice/laravel-translation-cache/issues"
+    },
     "type": "library",
     "require": {
         "php": "^8.3",
